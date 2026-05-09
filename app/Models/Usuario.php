@@ -42,4 +42,16 @@ class Usuario
 
     return false;
   }
+  // Método para buscar usuário pelo e-mail na hora do login
+  public function buscarPorEmail($email)
+  {
+    $query = "SELECT id, nome, senha_hash, perfil FROM " . $this->table_name . " WHERE email = ? LIMIT 1";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $email);
+    $stmt->execute();
+
+    // Retorna um array associativo com os dados do usuário, ou false se não achar
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
 }
