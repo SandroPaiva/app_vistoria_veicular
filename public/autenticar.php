@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $controller = new UsuarioController();
 
   if ($controller->login($email, $senha)) {
-    echo "<h2>Login realizado com sucesso!</h2>";
-    echo "Bem-vindo(a), " . $_SESSION['usuario_nome'] . " (Perfil: " . $_SESSION['usuario_perfil'] . ")";
-    // Na próxima fase, trocaremos esse echo por: header("Location: dashboard.php");
+    // Redireciona para o painel principal
+    header("Location: dashboard.php");
+    exit; // Sempre use exit após um header de redirecionamento
   } else {
     echo "E-mail ou senha incorretos. <br><br> <a href='index.php'>Voltar e tentar novamente</a>";
   }
