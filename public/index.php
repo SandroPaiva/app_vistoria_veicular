@@ -1,11 +1,9 @@
 <?php
 // Arquivo: public/index.php
 
-// Requisita o arquivo de conexão
-require_once '../app/Core/Database.php';
+// Inicia a sessão para verificar se já existe alguém logado
+session_start();
 
-// Instancia a classe e tenta conectar
-$db = new Database();
-$conexao = $db->conectar();
-
+// Carrega a interface visual
+require_once '../views/login.php';
 ?>

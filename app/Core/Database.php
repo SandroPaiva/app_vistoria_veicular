@@ -21,7 +21,7 @@ class Database
       $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
       // Descomente a linha abaixo apenas para testar se funcionou, depois comente novamente.
-      echo "Conexão com o banco de dados realizada com sucesso!";
+      // echo "Conexão com o banco de dados realizada com sucesso!";
 
     } catch (PDOException $e) {
       echo "Erro de Conexão: " . $e->getMessage();
