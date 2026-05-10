@@ -39,5 +39,30 @@ class VistoriaController
       echo "Erro ao iniciar a vistoria.";
     }
   }
+  // Método para carregar a tela de preenchimento do checklist
+  public function checklist($id)
+  {
+    // 1. Busca os dados da Vistoria
+    $vistoria = $this->vistoriaModel->buscarPorId($id);
+
+    if (!$vistoria) {
+      echo "Erro: Vistoria não encontrada.";
+      return;
+    }
+
+    // 2. Precisamos instanciar os models de Categoria e Item aqui
+    require_once __DIR__ . '/../Models/Categoria.php';
+    require_once __DIR__ . '/../Models/Item.php';
+
+    $categoriaModel = new Categoria($this->db);
+    $itemModel = new Item($this->db);
+
+    // 3. Busca todas as categorias e itens para montar a tela
+    $categorias = $categoriaModel->listarTodas();
+    $itens = $itemModel->listarTodos();
+
+    // 4. Carrega a View
+    require_once __DIR__ . '/../../views/checklist.php';
+  }
 }
 ?>

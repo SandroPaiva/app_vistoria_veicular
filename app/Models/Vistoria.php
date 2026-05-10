@@ -26,5 +26,19 @@ class Vistoria
     }
     return false;
   }
+  // Busca a vistoria pelo ID trazendo também a placa, marca e modelo do veículo
+  public function buscarPorId($id)
+  {
+    $query = "SELECT v.*, ve.placa, ve.marca, ve.modelo 
+                  FROM " . $this->table_name . " v
+                  INNER JOIN veiculos ve ON v.veiculo_id = ve.id
+                  WHERE v.id = ?";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $id);
+    $stmt->execute();
+
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
 }
 ?>
