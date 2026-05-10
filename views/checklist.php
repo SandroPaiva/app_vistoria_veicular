@@ -121,6 +121,29 @@
       cursor: pointer;
       margin-top: 20px;
     }
+
+    /* Adicione dentro da tag <style> */
+    .item-linha.erro-validacao {
+      background-color: #fff3f3;
+      border-left: 5px solid #dc3545;
+    }
+
+    .btn-todos {
+      font-size: 12px;
+      padding: 5px 10px;
+      background: #17a2b8;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      float: right;
+      margin-left: 5px;
+      font-weight: normal;
+    }
+
+    .btn-todos:hover {
+      background: #138496;
+    }
   </style>
 </head>
 
@@ -142,6 +165,10 @@
       <div class="categoria-box">
         <h3 class="categoria-titulo">
           <?php echo htmlspecialchars($cat['nome']); ?>
+          <button type="button" class="btn-todos" onclick="marcarTodosCategoria(<?php echo $cat['id']; ?>, 'n/a')">N/A
+            Todos</button>
+          <button type="button" class="btn-todos" onclick="marcarTodosCategoria(<?php echo $cat['id']; ?>, 'ok')">✔ Todos
+            OK</button>
         </h3>
 
         <!-- Loop pelos Itens -->
@@ -155,14 +182,16 @@
 
               <div class="opcoes-status">
                 <!-- Os IDs precisam ser únicos para o HTML entender, por isso usamos o ID do item -->
-                <input type="radio" name="status_<?php echo $item['id']; ?>" id="ok_<?php echo $item['id']; ?>" value="ok">
+                <input type="radio" name="status_<?php echo $item['id']; ?>" id="ok_<?php echo $item['id']; ?>" value="ok"
+                  data-categoria="<?php echo $cat['id']; ?>">
                 <label for="ok_<?php echo $item['id']; ?>">✔ OK</label>
 
                 <input type="radio" name="status_<?php echo $item['id']; ?>" id="avaria_<?php echo $item['id']; ?>"
-                  value="avaria">
+                  value="avaria" data-categoria="<?php echo $cat['id']; ?>">
                 <label for="avaria_<?php echo $item['id']; ?>">✖ Avaria</label>
 
-                <input type="radio" name="status_<?php echo $item['id']; ?>" id="na_<?php echo $item['id']; ?>" value="n/a">
+                <input type="radio" name="status_<?php echo $item['id']; ?>" id="na_<?php echo $item['id']; ?>" value="n/a"
+                  data-categoria="<?php echo $cat['id']; ?>">
                 <label for="na_<?php echo $item['id']; ?>">N/A</label>
               </div>
 
@@ -176,11 +205,58 @@
       </div>
     <?php endforeach; ?>
 
-    <button class="btn-concluir"
-      onclick="if(confirm('Tem certeza que deseja finalizar esta vistoria? Não será possível alterá-la depois.')) { window.location.href='finalizar_vistoria.php?id=<?php echo isset($vistoria['id']) ? $vistoria['id'] : 'N/A'; ?>'; }">Finalizar
-      Vistoria</button>
+    <button class="btn-concluir" onclick="validarEFinalizar()">Finalizar Vistoria</button>
   </div>
   <script>
+    // Função para validar se todos os itens foram respondidos antes de finalizar
+    // Nova função de validação com pintura de itens faltantes
+    function validarEFinalizar() {
+      let faltam = 0;
+
+      // Passa por todas as linhas de itens na tela
+      document.querySelectorAll('.item-linha').forEach(linha => {
+        // Procura se tem algum radio marcado dentro DESSA linha específica
+        const respondido = linha.querySelector('input[type="radio"]:checked');
+
+        if (!respondido) {
+          linha.classList.add('erro-validacao'); // Pinta a linha de vermelho
+          faltam++;
+        } else {
+          linha.classList.remove('erro-validacao'); // Tira o vermelho se estiver OK
+        }
+      });
+
+      if (faltam > 0) {
+        alert(`ATENÇÃO!\n\nFaltam ${faltam} item(ns) para serem avaliados.\nEles foram destacados em vermelho para facilitar a localização.\n\nO sistema não permite finalizar vistorias incompletas.`);
+        return;
+      }
+
+      if (confirm('Tem certeza que deseja finalizar esta vistoria? Não será possível alterá-la depois.')) {
+        window.location.href = 'finalizar_vistoria.php?id=<?php echo $vistoria['id']; ?>';
+      }
+    }
+
+    // Função para marcar todos os itens de uma categoria
+    function marcarTodosCategoria(catId, status) {
+      if (confirm(`Deseja marcar todos os itens desta categoria como ${status.toUpperCase()}?`)) {
+        // Seleciona todos os rádios que tenham a categoria clicada E o valor clicado
+        const radios = document.querySelectorAll(`input[data-categoria="${catId}"][value="${status}"]`);
+
+        radios.forEach(radio => {
+          // Só altera se não estiver marcado
+          if (!radio.checked) {
+            radio.checked = true;
+
+            // IMPORTANTE: Tira o erro vermelho caso a linha estivesse vermelha
+            radio.closest('.item-linha').classList.remove('erro-validacao');
+
+            // Pegamos o ID do item e forçamos o salvamento no banco de dados!
+            const itemId = radio.id.split('_')[1];
+            salvarItem(itemId);
+          }
+        });
+      }
+    }
     // Função que pega os dados do item e manda pro PHP sem recarregar a tela
     function salvarItem(itemId) {
       const vistoriaId = <?php echo isset($vistoria['id']) ? $vistoria['id'] : 'null'; ?>;
