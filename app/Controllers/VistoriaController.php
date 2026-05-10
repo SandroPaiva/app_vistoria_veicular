@@ -78,5 +78,17 @@ class VistoriaController
       echo json_encode(['sucesso' => false, 'erro' => 'Falha ao salvar no banco']);
     }
   }
+
+  // Método para finalizar e travar a vistoria
+  public function finalizar($id)
+  {
+    if ($this->vistoriaModel->finalizarVistoria($id)) {
+      // Sucesso! Por enquanto, volta pro Dashboard. Na próxima fase, geraremos o PDF aqui.
+      header("Location: dashboard.php?msg=vistoria_concluida");
+      exit;
+    } else {
+      echo "Erro ao finalizar a vistoria.";
+    }
+  }
 }
 ?>

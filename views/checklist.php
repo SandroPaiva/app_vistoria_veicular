@@ -176,7 +176,9 @@
       </div>
     <?php endforeach; ?>
 
-    <button class="btn-concluir">Finalizar e Gerar PDF</button>
+    <button class="btn-concluir"
+      onclick="if(confirm('Tem certeza que deseja finalizar esta vistoria? Não será possível alterá-la depois.')) { window.location.href='finalizar_vistoria.php?id=<?php echo isset($vistoria['id']) ? $vistoria['id'] : 'N/A'; ?>'; }">Finalizar
+      Vistoria</button>
   </div>
   <script>
     // Função que pega os dados do item e manda pro PHP sem recarregar a tela

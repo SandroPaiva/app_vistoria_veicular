@@ -55,5 +55,21 @@ class Vistoria
 
     return $stmt->execute();
   }
+
+  // Método para encerrar a vistoria
+  public function finalizarVistoria($id)
+  {
+    $query = "UPDATE " . $this->table_name . " 
+                  SET status = 'concluida', data_fim = CURRENT_TIMESTAMP 
+                  WHERE id = ?";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $id);
+
+    return $stmt->execute();
+  }
+
+
+
 }
 ?>
