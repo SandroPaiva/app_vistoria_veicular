@@ -64,5 +64,19 @@ class VistoriaController
     // 4. Carrega a View
     require_once __DIR__ . '/../../views/checklist.php';
   }
+  // Recebe os dados do JavaScript e retorna um JSON
+  public function salvarRespostaAjax($dados)
+  {
+    $vistoria_id = (int) $dados['vistoria_id'];
+    $item_id = (int) $dados['item_id'];
+    $status_item = $dados['status_item'] ?? null;
+    $observacao = $dados['observacao'] ?? null;
+
+    if ($this->vistoriaModel->salvarRespostaItem($vistoria_id, $item_id, $status_item, $observacao)) {
+      echo json_encode(['sucesso' => true]);
+    } else {
+      echo json_encode(['sucesso' => false, 'erro' => 'Falha ao salvar no banco']);
+    }
+  }
 }
 ?>

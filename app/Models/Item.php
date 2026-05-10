@@ -14,7 +14,7 @@ class Item
   // Lista os itens combinando com a tabela de categorias para pegar o nome
   public function listarTodos()
   {
-    $query = "SELECT i.id, i.nome, i.ordem, i.ativo, c.nome as categoria_nome 
+    $query = "SELECT i.id, i.categoria_id, i.nome, i.ordem, i.ativo, c.nome as categoria_nome 
                   FROM " . $this->table_name . " i
                   INNER JOIN categorias_checklist c ON i.categoria_id = c.id
                   ORDER BY c.ordem ASC, i.ordem ASC";

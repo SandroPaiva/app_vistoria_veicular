@@ -40,5 +40,20 @@ class Vistoria
 
     return $stmt->fetch(PDO::FETCH_ASSOC);
   }
+  // Salva ou atualiza a resposta de um item específico do checklist
+  public function salvarRespostaItem($vistoria_id, $item_id, $status_item, $observacao)
+  {
+    $query = "INSERT INTO vistoria_itens (vistoria_id, item_id, status_item, observacao) 
+                  VALUES (?, ?, ?, ?) 
+                  ON DUPLICATE KEY UPDATE status_item = VALUES(status_item), observacao = VALUES(observacao)";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $vistoria_id);
+    $stmt->bindParam(2, $item_id);
+    $stmt->bindParam(3, $status_item);
+    $stmt->bindParam(4, $observacao);
+
+    return $stmt->execute();
+  }
 }
 ?>

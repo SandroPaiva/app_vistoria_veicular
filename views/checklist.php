@@ -128,24 +128,24 @@
   <div class="container">
     <div class="cabecalho-os">
       <h2>Vistoria #
-        <?php echo $vistoria['id']; ?>
+        <?php echo isset($vistoria['id']) ? $vistoria['id'] : 'N/A'; ?>
       </h2>
       <p><strong>Veículo:</strong>
-        <?php echo htmlspecialchars($vistoria['placa']) . ' - ' . htmlspecialchars($vistoria['marca'] . ' ' . $vistoria['modelo']); ?>
+        <?php echo isset($vistoria['placa'], $vistoria['marca'], $vistoria['modelo']) ? htmlspecialchars($vistoria['placa']) . ' - ' . htmlspecialchars($vistoria['marca'] . ' ' . $vistoria['modelo']) : 'N/A'; ?>
       </p>
     </div>
 
     <p style="color: #666; font-size: 14px;">Os dados são salvos automaticamente ao clicar.</p>
 
     <!-- Loop pelas Categorias -->
-    <?php foreach ($categorias as $cat): ?>
+    <?php foreach (isset($categorias) ? $categorias : [] as $cat): ?>
       <div class="categoria-box">
         <h3 class="categoria-titulo">
           <?php echo htmlspecialchars($cat['nome']); ?>
         </h3>
 
         <!-- Loop pelos Itens -->
-        <?php foreach ($itens as $item): ?>
+        <?php foreach (isset($itens) ? $itens : [] as $item): ?>
           <!-- O IF verifica se o item pertence a esta categoria do loop atual -->
           <?php if ($item['categoria_id'] == $cat['id']): ?>
             <div class="item-linha">
@@ -166,7 +166,8 @@
                 <label for="na_<?php echo $item['id']; ?>">N/A</label>
               </div>
 
-              <input type="text" class="obs-input" placeholder="Observações (Opcional)...">
+              <input type="text" class="obs-input" id="obs_<?php echo $item['id']; ?>"
+                placeholder="Observações (Opcional)...">
 
               <!-- O botão de foto virá na Fase 4 -->
             </div>
@@ -177,6 +178,59 @@
 
     <button class="btn-concluir">Finalizar e Gerar PDF</button>
   </div>
+  <script>
+    // Função que pega os dados do item e manda pro PHP sem recarregar a tela
+    function salvarItem(itemId) {
+      const vistoriaId = <?php echo isset($vistoria['id']) ? $vistoria['id'] : 'null'; ?>;
+
+      // Pega qual botão de rádio foi selecionado (OK, Avaria, etc)
+      const statusRadio = document.querySelector(`input[name="status_${itemId}"]:checked`);
+      const statusValor = statusRadio ? statusRadio.value : null;
+
+      // Pega o texto da observação
+      const obsInput = document.getElementById(`obs_${itemId}`);
+      const obsValor = obsInput ? obsInput.value : '';
+
+      if (statusValor) {
+        // Prepara o "pacote" de dados
+        const formData = new FormData();
+        formData.append('vistoria_id', vistoriaId);
+        formData.append('item_id', itemId);
+        formData.append('status_item', statusValor);
+        formData.append('observacao', obsValor);
+
+        // Dispara a requisição para o nosso arquivo PHP
+        fetch('api_salvar_item.php', {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.sucesso) {
+              console.log(`✓ Item ${itemId} salvo no banco!`);
+            }
+          })
+          .catch(error => console.error('Erro de conexão:', error));
+      }
+    }
+
+    // Coloca um "espião" (Event Listener) em todos os botões de rádio
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        // O id do rádio é tipo "ok_5" ou "avaria_12". Dividimos pelo "_" para pegar só o número
+        const itemId = this.id.split('_')[1];
+        salvarItem(itemId);
+      });
+    });
+
+    // Coloca o espião nas observações para salvar quando o usuário tirar o dedo do campo (evento 'blur')
+    document.querySelectorAll('.obs-input').forEach(input => {
+      input.addEventListener('blur', function () {
+        const itemId = this.id.split('_')[1];
+        salvarItem(itemId);
+      });
+    });
+  </script>
 </body>
 
 </html>
