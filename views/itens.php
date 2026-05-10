@@ -1,4 +1,13 @@
 <!-- Arquivo: views/itens.php -->
+<?php
+// Initialize variables if not already set
+if (!isset($categorias)) {
+    $categorias = [];
+}
+if (!isset($itens)) {
+    $itens = [];
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 

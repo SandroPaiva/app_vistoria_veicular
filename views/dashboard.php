@@ -81,6 +81,7 @@
       <a href="veiculos.php">🚗 Gerenciar Veículos</a>
       <a href="#">📋 Nova Vistoria</a>
       <a href="categorias.php">📋 Cadastrar Categorias</a>
+      <a href="itens.php">✅ Cadastrar Itens de Vistoria</a>
     </div>
   </div>
 </body>
