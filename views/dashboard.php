@@ -80,6 +80,7 @@
       <!-- Em breve criaremos esta rota -->
       <a href="veiculos.php">🚗 Gerenciar Veículos</a>
       <a href="#">📋 Nova Vistoria</a>
+      <a href="categorias.php">📋 Cadastrar Categorias</a>
     </div>
   </div>
 </body>
