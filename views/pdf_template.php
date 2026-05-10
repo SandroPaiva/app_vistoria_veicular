@@ -139,8 +139,56 @@ if (!isset($respostas)) {
           </td>
           <td>
             <?php if (!empty($resp['caminho_arquivo'])): ?>
-              <!-- Para o Dompdf ler a imagem local, precisamos passar o caminho absoluto do servidor -->
-              <img src="<?php echo __DIR__ . '/../../public/' . $resp['caminho_arquivo']; ?>" class="foto-avaria">
+              <?php
+              $caminho_fisico = __DIR__ . '/../public/' . $resp['caminho_arquivo'];
+
+              if (file_exists($caminho_fisico)) {
+                $tipo = strtolower(pathinfo($caminho_fisico, PATHINFO_EXTENSION));
+
+                // 1. Pega as dimensões originais da foto
+                list($largura_orig, $altura_orig) = getimagesize($caminho_fisico);
+
+                // 2. Define um tamanho seguro e leve para o PDF (ex: 500px de largura)
+                $nova_largura = 500;
+                // Calcula a nova altura mantendo a proporção (aspect ratio)
+                $nova_altura = ($altura_orig / $largura_orig) * $nova_largura;
+
+                // 3. Cria uma "tela em branco" na memória
+                $imagem_nova = imagecreatetruecolor($nova_largura, $nova_altura);
+
+                // 4. Carrega a imagem original dependendo do tipo
+                if ($tipo == 'jpg' || $tipo == 'jpeg') {
+                  $imagem_orig = imagecreatefromjpeg($caminho_fisico);
+                } elseif ($tipo == 'png') {
+                  $imagem_orig = imagecreatefrompng($caminho_fisico);
+                } else {
+                  $imagem_orig = false;
+                }
+
+                if ($imagem_orig) {
+                  // 5. Copia e redimensiona a imagem original para a nossa tela em branco
+                  imagecopyresampled($imagem_nova, $imagem_orig, 0, 0, 0, 0, $nova_largura, $nova_altura, $largura_orig, $altura_orig);
+
+                  // 6. Usa o Output Buffering para capturar a nova imagem compactada
+                  ob_start();
+                  imagejpeg($imagem_nova, null, 80); // Salva com 80% de qualidade
+                  $dados_imagem = ob_get_clean();
+
+                  // 7. Limpa a memória RAM do servidor
+                  imagedestroy($imagem_nova);
+                  imagedestroy($imagem_orig);
+
+                  // 8. Gera o Base64 da imagem que agora é minúscula!
+                  $base64 = 'data:image/jpeg;base64,' . base64_encode($dados_imagem);
+
+                  echo '<img src="' . $base64 . '" class="foto-avaria">';
+                } else {
+                  echo "Formato não suportado.";
+                }
+              } else {
+                echo '<span style="color: red;">Erro na imagem.</span>';
+              }
+              ?>
             <?php else: ?>
               -
             <?php endif; ?>
