@@ -25,5 +25,17 @@ class VeiculoController
     // Carrega a tela de listagem, passando os dados
     require_once __DIR__ . '/../../views/veiculos.php';
   }
+  // Método para processar o salvamento de um novo veículo
+  public function salvar($dados)
+  {
+    // Envia os dados para o Model cadastrar no banco
+    if ($this->veiculoModel->cadastrar($dados)) {
+      // Se der certo, recarrega a página de veículos
+      header("Location: veiculos.php");
+      exit;
+    } else {
+      echo "Erro ao cadastrar o veículo. Talvez a placa já exista.";
+    }
+  }
 }
 ?>
