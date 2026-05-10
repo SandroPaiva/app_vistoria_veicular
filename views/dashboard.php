@@ -82,8 +82,8 @@
       <a href="#">📋 Nova Vistoria</a>
       <a href="categorias.php">📋 Cadastrar Categorias</a>
       <a href="itens.php">✅ Cadastrar Itens de Vistoria</a>
+      <a href="nova_vistoria.php">📊 Realizar Vistoria</a>
     </div>
-  </div>
 </body>
 
 </html>
