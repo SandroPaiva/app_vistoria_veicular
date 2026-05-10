@@ -79,7 +79,6 @@
     <div class="menu">
       <!-- Em breve criaremos esta rota -->
       <a href="veiculos.php">🚗 Gerenciar Veículos</a>
-      <a href="nova_vistoria.php">📋 Nova Vistoria</a>
       <a href="categorias.php">📋 Cadastrar Categorias</a>
       <a href="itens.php">✅ Cadastrar Itens de Vistoria</a>
       <a href="nova_vistoria.php">📊 Realizar Vistoria</a>

@@ -68,6 +68,35 @@ class Vistoria
 
     return $stmt->execute();
   }
+  // Registra o caminho da foto anexada ao item
+  public function salvarFoto($vistoria_id, $item_id, $caminho_arquivo)
+  {
+    $query = "INSERT INTO vistoria_fotos (vistoria_id, item_id, caminho_arquivo) VALUES (?, ?, ?)";
+    $stmt = $this->conn->prepare($query);
+
+    $stmt->bindParam(1, $vistoria_id);
+    $stmt->bindParam(2, $item_id);
+    $stmt->bindParam(3, $caminho_arquivo);
+
+    return $stmt->execute();
+  }
+  // Busca todos os itens respondidos, incluindo a categoria e a foto (se houver)
+  public function buscarRelatorioCompleto($vistoria_id)
+  {
+    $query = "SELECT vi.status_item, vi.observacao, i.nome as item_nome, c.nome as categoria_nome, f.caminho_arquivo
+                  FROM vistoria_itens vi
+                  INNER JOIN itens_checklist i ON vi.item_id = i.id
+                  INNER JOIN categorias_checklist c ON i.categoria_id = c.id
+                  LEFT JOIN vistoria_fotos f ON (f.vistoria_id = vi.vistoria_id AND f.item_id = vi.item_id)
+                  WHERE vi.vistoria_id = ?
+                  ORDER BY c.ordem ASC, i.ordem ASC";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $vistoria_id);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 
 
 

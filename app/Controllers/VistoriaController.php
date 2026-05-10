@@ -5,6 +5,10 @@ require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/../Models/Vistoria.php';
 require_once __DIR__ . '/../Models/Veiculo.php'; // Precisamos listar os veículos
 
+require_once __DIR__ . '/../../vendor/autoload.php';
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 class VistoriaController
 {
   private $db;
@@ -89,6 +93,63 @@ class VistoriaController
     } else {
       echo "Erro ao finalizar a vistoria.";
     }
+  }
+  // Recebe a foto via AJAX, salva no servidor e registra no banco
+  public function uploadFotoAjax($dados, $arquivos)
+  {
+    $vistoria_id = (int) $dados['vistoria_id'];
+    $item_id = (int) $dados['item_id'];
+
+    // Verifica se a imagem realmente foi enviada sem erros
+    if (isset($arquivos['foto']) && $arquivos['foto']['error'] === UPLOAD_ERR_OK) {
+
+      $diretorio_destino = __DIR__ . '/../../public/uploads/';
+
+      // Gera um nome único para a imagem para evitar substituições (ex: vist_5_item_12_1689000.jpg)
+      $extensao = pathinfo($arquivos['foto']['name'], PATHINFO_EXTENSION);
+      $nome_arquivo = "vist_{$vistoria_id}_item_{$item_id}_" . time() . "." . $extensao;
+
+      $caminho_completo = $diretorio_destino . $nome_arquivo;
+
+      // Move o arquivo da memória temporária para a pasta final
+      if (move_uploaded_file($arquivos['foto']['tmp_name'], $caminho_completo)) {
+        // Se salvou o arquivo, grava no banco de dados o caminho relativo
+        $caminho_banco = 'uploads/' . $nome_arquivo;
+        $this->vistoriaModel->salvarFoto($vistoria_id, $item_id, $caminho_banco);
+
+        echo json_encode(['sucesso' => true, 'caminho' => $caminho_banco]);
+        return;
+      }
+    }
+
+    echo json_encode(['sucesso' => false, 'erro' => 'Falha ao processar o upload da imagem.']);
+  }
+  // Método para gerar e exibir o PDF do laudo
+  public function gerarPdf($id)
+  {
+    $vistoria = $this->vistoriaModel->buscarPorId($id);
+    $respostas = $this->vistoriaModel->buscarRelatorioCompleto($id);
+
+    if (!$vistoria || $vistoria['status'] !== 'concluida') {
+      die("Erro: Vistoria não encontrada ou ainda não foi finalizada.");
+    }
+
+    // Liga o "Gravador de Tela" do PHP para capturar o HTML
+    ob_start();
+    require_once __DIR__ . '/../../views/pdf_template.php';
+    $html = ob_get_clean(); // Desliga o gravador e salva tudo na variável $html
+
+    // Configura e gera o PDF
+    $options = new Options();
+    $options->set('isRemoteEnabled', true); // Permite carregar imagens
+
+    $dompdf = new Dompdf($options);
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    // Attachment => false abre o PDF no navegador. Se for true, força o download.
+    $dompdf->stream("laudo_vistoria_{$id}.pdf", ["Attachment" => false]);
   }
 }
 ?>

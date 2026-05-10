@@ -198,7 +198,22 @@
               <input type="text" class="obs-input" id="obs_<?php echo $item['id']; ?>"
                 placeholder="Observações (Opcional)...">
 
-              <!-- O botão de foto virá na Fase 4 -->
+              <!-- Bloco de Foto (Invisível o input real, usamos um botão bonitinho para clicar nele) -->
+              <div style="margin-top: 10px;">
+                <!-- O atributo capture="environment" força o Android/iOS a abrir a câmera traseira em vez dos arquivos -->
+                <input type="file" id="foto_<?php echo $item['id']; ?>" accept="image/*" capture="environment"
+                  style="display:none;" onchange="enviarFoto(<?php echo $item['id']; ?>)">
+
+                <button type="button" class="btn-foto"
+                  onclick="document.getElementById('foto_<?php echo $item['id']; ?>').click()"
+                  style="padding: 8px 15px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                  📷 Tirar Foto
+                </button>
+
+                <!-- Local onde a miniatura da foto vai aparecer após o upload -->
+                <div id="galeria_<?php echo $item['id']; ?>"
+                  style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;"></div>
+              </div>
             </div>
           <?php endif; ?>
         <?php endforeach; ?>
@@ -232,7 +247,7 @@
       }
 
       if (confirm('Tem certeza que deseja finalizar esta vistoria? Não será possível alterá-la depois.')) {
-        window.location.href = 'finalizar_vistoria.php?id=<?php echo $vistoria['id']; ?>';
+        window.location.href = 'finalizar_vistoria.php?id=<?php echo isset($vistoria['id']) ? $vistoria['id'] : ''; ?>';
       }
     }
 
@@ -308,6 +323,51 @@
         salvarItem(itemId);
       });
     });
+    // Função para interceptar o arquivo escolhido e mandar pro servidor via AJAX
+    function enviarFoto(itemId) {
+      const inputFoto = document.getElementById(`foto_${itemId}`);
+      const vistoriaId = <?php echo isset($vistoria['id']) ? $vistoria['id'] : 'null'; ?>;
+
+      // Verifica se o usuário realmente selecionou um arquivo ou cancelou
+      if (inputFoto.files.length > 0) {
+        const arquivo = inputFoto.files[0];
+        const formData = new FormData();
+
+        formData.append('vistoria_id', vistoriaId);
+        formData.append('item_id', itemId);
+        formData.append('foto', arquivo); // Anexa o arquivo físico ao pacote
+
+        // Muda o texto do botão para dar feedback visual
+        const btn = inputFoto.nextElementSibling;
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = '⏳ Enviando...';
+
+        fetch('api_upload_foto.php', {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            btn.innerHTML = textoOriginal; // Restaura o botão
+
+            if (data.sucesso) {
+              // Cria uma miniatura da foto e joga na tela
+              const galeria = document.getElementById(`galeria_${itemId}`);
+              const img = document.createElement('img');
+              img.src = data.caminho;
+              img.style = "width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ccc;";
+              galeria.appendChild(img);
+            } else {
+              alert(data.erro);
+            }
+          })
+          .catch(error => {
+            btn.innerHTML = textoOriginal;
+            console.error('Erro de conexão:', error);
+            alert("Erro ao enviar a imagem.");
+          });
+      }
+    }
   </script>
 </body>
 
