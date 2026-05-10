@@ -1,5 +1,10 @@
 <!-- Arquivo: views/dashboard.php -->
 <!DOCTYPE html>
+<?php
+$totalVeiculos = $totalVeiculos ?? 0;
+$vistoriasAndamento = $vistoriasAndamento ?? 0;
+$vistoriasConcluidas = $vistoriasConcluidas ?? 0;
+?>
 <html lang="pt-BR">
 
 <head>
@@ -59,6 +64,46 @@
     .menu a:hover {
       background: #004494;
     }
+
+    .kpi-container {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .kpi-card {
+      flex: 1;
+      min-width: 200px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 5px solid #0056b3;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .kpi-card h3 {
+      margin: 0;
+      font-size: 36px;
+      color: #333;
+    }
+
+    .kpi-card p {
+      margin: 5px 0 0;
+      color: #666;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .border-warning {
+      border-left-color: #ffc107;
+    }
+
+    .border-success {
+      border-left-color: #28a745;
+    }
   </style>
 </head>
 
@@ -75,7 +120,27 @@
       </div>
       <a href="logout.php" class="btn-sair">Sair</a>
     </div>
-
+    <!-- Cards de Indicadores (KPIs) -->
+    <div class="kpi-container">
+      <div class="kpi-card">
+        <h3>
+          <?php echo $totalVeiculos; ?>
+        </h3>
+        <p>Veículos Cadastrados</p>
+      </div>
+      <div class="kpi-card border-warning">
+        <h3>
+          <?php echo $vistoriasAndamento; ?>
+        </h3>
+        <p>Vistorias em Andamento</p>
+      </div>
+      <div class="kpi-card border-success">
+        <h3>
+          <?php echo $vistoriasConcluidas; ?>
+        </h3>
+        <p>Vistorias Concluídas</p>
+      </div>
+    </div>
     <div class="menu">
       <!-- Em breve criaremos esta rota -->
       <a href="veiculos.php">🚗 Gerenciar Veículos</a>

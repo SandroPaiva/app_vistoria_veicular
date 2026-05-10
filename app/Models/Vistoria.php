@@ -97,6 +97,16 @@ class Vistoria
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
+  // Retorna o total de vistorias filtradas pelo status
+  public function contarPorStatus($status)
+  {
+    $query = "SELECT COUNT(*) as total FROM " . $this->table_name . " WHERE status = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $status);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row['total'];
+  }
 
 
 
