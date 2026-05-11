@@ -56,5 +56,24 @@ class Veiculo
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     return $row['total'];
   }
+
+  // Lista todas as marcas únicas cadastradas
+  public function listarMarcas()
+  {
+    $query = "SELECT DISTINCT marca FROM " . $this->table_name . " WHERE marca != '' ORDER BY marca ASC";
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  // Lista todos os modelos únicos de uma determinada marca
+  public function listarModelos($marca)
+  {
+    $query = "SELECT DISTINCT modelo FROM " . $this->table_name . " WHERE marca = ? AND modelo != '' ORDER BY modelo ASC";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $marca);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 }
 ?>

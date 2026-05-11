@@ -152,6 +152,7 @@ $vistoriasConcluidas = $vistoriasConcluidas ?? 0;
       <a href="itens.php">✅ Cadastrar Itens de Vistoria</a>
       <?php endif; ?>
       <a href="nova_vistoria.php">📊 Realizar Vistoria</a>
+      <a href="historico.php">🕰️ Histórico de Vistorias</a>
     </div>
 </body>
 

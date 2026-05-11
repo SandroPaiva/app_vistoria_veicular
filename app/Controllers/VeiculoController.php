@@ -21,6 +21,7 @@ class VeiculoController
   {
     // Busca os veículos no banco
     $veiculos = $this->veiculoModel->listarTodos();
+    $marcas = $this->veiculoModel->listarMarcas();
 
     // Carrega a tela de listagem, passando os dados
     require_once __DIR__ . '/../../views/veiculos.php';
@@ -36,6 +37,13 @@ class VeiculoController
     } else {
       echo "Erro ao cadastrar o veículo. Talvez a placa já exista.";
     }
+  }
+
+  // Retorna os modelos em JSON para o AJAX
+  public function buscarModelosAjax($marca)
+  {
+    $modelos = $this->veiculoModel->listarModelos($marca);
+    echo json_encode($modelos);
   }
 }
 ?>

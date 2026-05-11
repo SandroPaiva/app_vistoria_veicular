@@ -108,7 +108,19 @@ class Vistoria
     return $row['total'];
   }
 
+  // Retorna todas as vistorias ordenadas pela data mais recente
+  public function listarTodas()
+  {
+    $query = "SELECT v.id, v.status, v.data_inicio, v.data_fim, ve.placa, ve.marca, ve.modelo 
+                  FROM " . $this->table_name . " v
+                  INNER JOIN veiculos ve ON v.veiculo_id = ve.id
+                  ORDER BY v.id DESC";
 
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 
 }
 ?>

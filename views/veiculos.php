@@ -98,8 +98,19 @@
         <div class="form-row">
           <input type="text" name="placa" placeholder="Placa (Ex: ABC1D23)" required maxlength="10">
           <input type="text" name="chassi" placeholder="Chassi (Opcional)" maxlength="50">
-          <input type="text" name="marca" placeholder="Marca" required>
-          <input type="text" name="modelo" placeholder="Modelo" required>
+          <input type="text" name="marca" id="inputMarca" list="listaMarcas" placeholder="Marca (Digite ou escolha)" required autocomplete="off">
+          <datalist id="listaMarcas">
+            <?php if (!empty($marcas)): ?>
+              <?php foreach ($marcas as $m): ?>
+                <option value="<?php echo htmlspecialchars($m['marca']); ?>"></option>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </datalist>
+
+          <input type="text" name="modelo" id="inputModelo" list="listaModelos" placeholder="Modelo (Digite ou escolha)" required autocomplete="off">
+          <datalist id="listaModelos">
+            <!-- As options serão carregadas via JavaScript -->
+          </datalist>
           <input type="number" name="ano" placeholder="Ano (Ex: 2024)" required min="1900" max="2100">
           <select name="tipo" required>
             <option value="">Selecione o Tipo...</option>
@@ -156,6 +167,30 @@
       </tbody>
     </table>
   </div>
+  <script>
+    document.getElementById('inputMarca').addEventListener('input', function() {
+      const marcaSelecionada = this.value;
+      const datalistModelos = document.getElementById('listaModelos');
+      const inputModelo = document.getElementById('inputModelo');
+
+      // Limpa os modelos anteriores
+      datalistModelos.innerHTML = '';
+      
+      if (marcaSelecionada.length > 0) {
+        // Faz a requisição AJAX
+        fetch(`api_modelos.php?marca=${encodeURIComponent(marcaSelecionada)}`)
+          .then(response => response.json())
+          .then(data => {
+            data.forEach(m => {
+              const option = document.createElement('option');
+              option.value = m.modelo;
+              datalistModelos.appendChild(option);
+            });
+          })
+          .catch(error => console.error('Erro ao buscar modelos:', error));
+      }
+    });
+  </script>
 </body>
 
 </html>

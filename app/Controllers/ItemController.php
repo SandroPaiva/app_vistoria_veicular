@@ -37,5 +37,36 @@ class ItemController
       echo "Erro ao cadastrar o item.";
     }
   }
+
+  public function editar($id)
+  {
+    $item = $this->itemModel->buscarPorId($id);
+    if ($item) {
+      $categorias = $this->categoriaModel->listarTodas();
+      require_once __DIR__ . '/../../views/editar_item.php';
+    } else {
+      echo "Item não encontrado.";
+    }
+  }
+
+  public function atualizar($id, $categoria_id, $nome, $ordem)
+  {
+    if ($this->itemModel->atualizar($id, $categoria_id, $nome, $ordem)) {
+      header("Location: itens.php");
+      exit;
+    } else {
+      echo "Erro ao atualizar o item.";
+    }
+  }
+
+  public function excluir($id)
+  {
+    if ($this->itemModel->excluir($id)) {
+      header("Location: itens.php");
+      exit;
+    } else {
+      echo "Erro ao excluir o item. Ele já pode ter sido respondido em alguma vistoria.";
+    }
+  }
 }
 ?>

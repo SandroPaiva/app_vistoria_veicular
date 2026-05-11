@@ -95,6 +95,7 @@
           <th>Ordem</th>
           <th>Nome da Categoria</th>
           <th>Status</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -109,6 +110,10 @@
               </td>
               <td>
                 <?php echo $cat['ativo'] ? 'Ativo' : 'Inativo'; ?>
+              </td>
+              <td>
+                <a href="editar_categoria.php?id=<?php echo $cat['id']; ?>" style="color: #0056b3; text-decoration: none; margin-right: 10px;">✏️ Editar</a>
+                <a href="excluir_categoria.php?id=<?php echo $cat['id']; ?>" style="color: #dc3545; text-decoration: none;" onclick="return confirm('Tem certeza que deseja excluir esta categoria? Isso pode afetar itens relacionados!');">🗑️ Excluir</a>
               </td>
             </tr>
           <?php endforeach; ?>

@@ -116,6 +116,7 @@ if (!isset($itens)) {
           <th>Ordem</th>
           <th>Nome do Item</th>
           <th>Status</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -133,6 +134,10 @@ if (!isset($itens)) {
               </td>
               <td>
                 <?php echo $item['ativo'] ? 'Ativo' : 'Inativo'; ?>
+              </td>
+              <td>
+                <a href="editar_item.php?id=<?php echo $item['id']; ?>" style="color: #0056b3; text-decoration: none; margin-right: 10px;">✏️ Editar</a>
+                <a href="excluir_item.php?id=<?php echo $item['id']; ?>" style="color: #dc3545; text-decoration: none;" onclick="return confirm('Tem certeza que deseja excluir este item?');">🗑️ Excluir</a>
               </td>
             </tr>
           <?php endforeach; ?>

@@ -37,5 +37,33 @@ class Categoria
     }
     return false;
   }
+
+  public function buscarPorId($id)
+  {
+    $query = "SELECT id, nome, ordem, ativo FROM " . $this->table_name . " WHERE id = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $id);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  public function atualizar($id, $nome, $ordem)
+  {
+    $query = "UPDATE " . $this->table_name . " SET nome = ?, ordem = ? WHERE id = ?";
+    $stmt = $this->conn->prepare($query);
+    $nome = htmlspecialchars(strip_tags($nome));
+    $stmt->bindParam(1, $nome);
+    $stmt->bindParam(2, $ordem);
+    $stmt->bindParam(3, $id);
+    return $stmt->execute();
+  }
+
+  public function excluir($id)
+  {
+    $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $id);
+    return $stmt->execute();
+  }
 }
 ?>

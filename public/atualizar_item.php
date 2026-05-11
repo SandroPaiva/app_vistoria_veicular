@@ -1,0 +1,24 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['usuario_perfil'], ['admin', 'supervisor'])) {
+  header("Location: index.php");
+  exit;
+}
+require_once '../app/Controllers/ItemController.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $id = $_POST['id'] ?? null;
+  $categoria_id = $_POST['categoria_id'] ?? null;
+  $nome = $_POST['nome'] ?? '';
+  $ordem = (int)($_POST['ordem'] ?? 0);
+
+  if ($id && $categoria_id && !empty($nome)) {
+    $controller = new ItemController();
+    $controller->atualizar($id, $categoria_id, $nome, $ordem);
+  } else {
+    echo "Dados incompletos.";
+  }
+} else {
+  header("Location: itens.php");
+}
+?>
