@@ -41,5 +41,23 @@ class UsuarioController
 
     return false; // Falha no login (e-mail ou senha incorretos)
   }
+
+  // Carrega a tela com todos os usuários
+  public function index()
+  {
+    $usuarios = $this->usuarioModel->listarTodos();
+    require_once __DIR__ . '/../../views/usuarios.php';
+  }
+
+  // Processa o salvamento de um novo usuário
+  public function salvar($nome, $email, $senha, $perfil)
+  {
+    if ($this->usuarioModel->cadastrar($nome, $email, $senha, $perfil)) {
+      header("Location: usuarios.php");
+      exit;
+    } else {
+      echo "Erro ao cadastrar o usuário.";
+    }
+  }
 }
 ?>

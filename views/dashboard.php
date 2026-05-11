@@ -143,9 +143,14 @@ $vistoriasConcluidas = $vistoriasConcluidas ?? 0;
     </div>
     <div class="menu">
       <!-- Em breve criaremos esta rota -->
+      <?php if (isset($_SESSION['usuario_perfil']) && $_SESSION['usuario_perfil'] === 'admin'): ?>
+      <a href="usuarios.php">👥 Gerenciar Usuários</a>
+      <?php endif; ?>
+      <?php if (isset($_SESSION['usuario_perfil']) && in_array($_SESSION['usuario_perfil'], ['admin', 'supervisor'])): ?>
       <a href="veiculos.php">🚗 Gerenciar Veículos</a>
       <a href="categorias.php">📋 Cadastrar Categorias</a>
       <a href="itens.php">✅ Cadastrar Itens de Vistoria</a>
+      <?php endif; ?>
       <a href="nova_vistoria.php">📊 Realizar Vistoria</a>
     </div>
 </body>

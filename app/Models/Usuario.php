@@ -54,4 +54,13 @@ class Usuario
     // Retorna um array associativo com os dados do usuário, ou false se não achar
     return $stmt->fetch(PDO::FETCH_ASSOC);
   }
+
+  // Método para listar todos os usuários
+  public function listarTodos()
+  {
+    $query = "SELECT id, nome, email, perfil, criado_em FROM " . $this->table_name . " ORDER BY nome ASC";
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 }
