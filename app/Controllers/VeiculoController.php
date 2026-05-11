@@ -45,5 +45,36 @@ class VeiculoController
     $modelos = $this->veiculoModel->listarModelos($marca);
     echo json_encode($modelos);
   }
+
+  public function editar($id)
+  {
+    $veiculo = $this->veiculoModel->buscarPorId($id);
+    if ($veiculo) {
+      $marcas = $this->veiculoModel->listarMarcas();
+      require_once __DIR__ . '/../../views/editar_veiculo.php';
+    } else {
+      echo "Veículo não encontrado.";
+    }
+  }
+
+  public function atualizar($dados)
+  {
+    if ($this->veiculoModel->atualizar($dados)) {
+      header("Location: veiculos.php");
+      exit;
+    } else {
+      echo "Erro ao atualizar o veículo.";
+    }
+  }
+
+  public function excluir($id)
+  {
+    if ($this->veiculoModel->excluir($id)) {
+      header("Location: veiculos.php");
+      exit;
+    } else {
+      echo "Erro ao excluir o veículo. Verifique se ele não possui vistorias cadastradas.";
+    }
+  }
 }
 ?>

@@ -29,7 +29,7 @@ class Vistoria
   // Busca a vistoria pelo ID trazendo também a placa, marca e modelo do veículo
   public function buscarPorId($id)
   {
-    $query = "SELECT v.*, ve.placa, ve.marca, ve.modelo 
+    $query = "SELECT v.*, ve.placa, ve.marca, ve.modelo, ve.nome_cliente 
                   FROM " . $this->table_name . " v
                   INNER JOIN veiculos ve ON v.veiculo_id = ve.id
                   WHERE v.id = ?";

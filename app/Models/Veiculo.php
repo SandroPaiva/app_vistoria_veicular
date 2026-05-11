@@ -14,7 +14,7 @@ class Veiculo
   // Método para listar todos os veículos cadastrados
   public function listarTodos()
   {
-    $query = "SELECT id, placa, marca, modelo, ano, tipo FROM " . $this->table_name . " ORDER BY id DESC";
+    $query = "SELECT id, placa, marca, modelo, ano, tipo, nome_cliente, telefone FROM " . $this->table_name . " ORDER BY id DESC";
     $stmt = $this->conn->prepare($query);
     $stmt->execute();
 
@@ -26,8 +26,8 @@ class Veiculo
   public function cadastrar($dados)
   {
     $query = "INSERT INTO " . $this->table_name . " 
-                  (placa, chassi, marca, modelo, ano, tipo) 
-                  VALUES (?, ?, ?, ?, ?, ?)";
+                  (placa, chassi, marca, modelo, ano, tipo, nome_cliente, telefone) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $this->conn->prepare($query);
 
@@ -39,7 +39,9 @@ class Veiculo
         $dados['marca'],
         $dados['modelo'],
         $dados['ano'],
-        $dados['tipo']
+        $dados['tipo'],
+        $dados['nome_cliente'] ?? null,
+        $dados['telefone'] ?? null
       ])
     ) {
       return true;
@@ -74,6 +76,43 @@ class Veiculo
     $stmt->bindParam(1, $marca);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public function buscarPorId($id)
+  {
+    $query = "SELECT id, placa, chassi, marca, modelo, ano, tipo, nome_cliente, telefone FROM " . $this->table_name . " WHERE id = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $id);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  public function atualizar($dados)
+  {
+    $query = "UPDATE " . $this->table_name . " 
+                  SET placa = ?, chassi = ?, marca = ?, modelo = ?, ano = ?, tipo = ?, nome_cliente = ?, telefone = ?
+                  WHERE id = ?";
+    $stmt = $this->conn->prepare($query);
+
+    return $stmt->execute([
+      $dados['placa'],
+      $dados['chassi'],
+      $dados['marca'],
+      $dados['modelo'],
+      $dados['ano'],
+      $dados['tipo'],
+      $dados['nome_cliente'] ?? null,
+      $dados['telefone'] ?? null,
+      $dados['id']
+    ]);
+  }
+
+  public function excluir($id)
+  {
+    $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $id);
+    return $stmt->execute();
   }
 }
 ?>

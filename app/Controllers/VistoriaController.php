@@ -150,6 +150,8 @@ class VistoriaController
 
     // Attachment => false abre o PDF no navegador. Se for true, força o download.
     $dompdf->stream("laudo_vistoria_{$id}.pdf", ["Attachment" => false]);
+  }
+
   // Carrega a tela com o histórico de vistorias
   public function historico()
   {

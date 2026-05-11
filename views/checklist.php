@@ -6,145 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Execução de Checklist - Vistoria</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .cabecalho-os {
-      background: #0056b3;
-      color: white;
-      padding: 15px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-    }
-
-    .categoria-box {
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      overflow: hidden;
-    }
-
-    .categoria-titulo {
-      background: #e9ecef;
-      padding: 10px 15px;
-      margin: 0;
-      font-size: 18px;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .item-linha {
-      padding: 15px;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .item-linha:last-child {
-      border-bottom: none;
-    }
-
-    .opcoes-status {
-      display: flex;
-      gap: 10px;
-    }
-
-    /* Estilizando os botões de rádio para ficarem grandes (Touch-friendly para Tablets) */
-    .opcoes-status label {
-      flex: 1;
-      text-align: center;
-      padding: 15px 5px;
-      border: 2px solid #ccc;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      background: #fafafa;
-    }
-
-    .opcoes-status input[type="radio"] {
-      display: none;
-    }
-
-    /* Esconde a bolinha padrão */
-
-    /* Cores quando selecionado (Nós ativaremos isso via JS no próximo passo, mas o CSS já fica pronto) */
-    .opcoes-status input[value="ok"]:checked+label {
-      border-color: #28a745;
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .opcoes-status input[value="avaria"]:checked+label {
-      border-color: #dc3545;
-      background: #f8d7da;
-      color: #721c24;
-    }
-
-    .opcoes-status input[value="n/a"]:checked+label {
-      border-color: #6c757d;
-      background: #e2e3e5;
-      color: #383d41;
-    }
-
-    .obs-input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-      margin-top: 5px;
-    }
-
-    .btn-concluir {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      background: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-
-    /* Adicione dentro da tag <style> */
-    .item-linha.erro-validacao {
-      background-color: #fff3f3;
-      border-left: 5px solid #dc3545;
-    }
-
-    .btn-todos {
-      font-size: 12px;
-      padding: 5px 10px;
-      background: #17a2b8;
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      float: right;
-      margin-left: 5px;
-      font-weight: normal;
-    }
-
-    .btn-todos:hover {
-      background: #138496;
-    }
-  </style>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
@@ -155,6 +17,9 @@
       </h2>
       <p><strong>Veículo:</strong>
         <?php echo isset($vistoria['placa'], $vistoria['marca'], $vistoria['modelo']) ? htmlspecialchars($vistoria['placa']) . ' - ' . htmlspecialchars($vistoria['marca'] . ' ' . $vistoria['modelo']) : 'N/A'; ?>
+      </p>
+      <p><strong>Cliente:</strong>
+        <?php echo isset($vistoria['nome_cliente']) && !empty($vistoria['nome_cliente']) ? htmlspecialchars($vistoria['nome_cliente']) : 'Não informado'; ?>
       </p>
     </div>
 
@@ -176,44 +41,47 @@
           <!-- O IF verifica se o item pertence a esta categoria do loop atual -->
           <?php if ($item['categoria_id'] == $cat['id']): ?>
             <div class="item-linha">
-              <strong>
-                <?php echo htmlspecialchars($item['nome']); ?>
-              </strong>
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <strong style="flex: 1; min-width: 200px; font-size: 16px;">
+                  <?php echo htmlspecialchars($item['nome']); ?>
+                </strong>
 
-              <div class="opcoes-status">
-                <!-- Os IDs precisam ser únicos para o HTML entender, por isso usamos o ID do item -->
-                <input type="radio" name="status_<?php echo $item['id']; ?>" id="ok_<?php echo $item['id']; ?>" value="ok"
-                  data-categoria="<?php echo $cat['id']; ?>">
-                <label for="ok_<?php echo $item['id']; ?>">✔ OK</label>
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                  <div class="opcoes-status" style="margin: 0;">
+                    <!-- Os IDs precisam ser únicos para o HTML entender, por isso usamos o ID do item -->
+                    <input type="radio" name="status_<?php echo $item['id']; ?>" id="ok_<?php echo $item['id']; ?>" value="ok"
+                      data-categoria="<?php echo $cat['id']; ?>">
+                    <label for="ok_<?php echo $item['id']; ?>">✔ OK</label>
 
-                <input type="radio" name="status_<?php echo $item['id']; ?>" id="avaria_<?php echo $item['id']; ?>"
-                  value="avaria" data-categoria="<?php echo $cat['id']; ?>">
-                <label for="avaria_<?php echo $item['id']; ?>">✖ Avaria</label>
+                    <input type="radio" name="status_<?php echo $item['id']; ?>" id="avaria_<?php echo $item['id']; ?>"
+                      value="avaria" data-categoria="<?php echo $cat['id']; ?>">
+                    <label for="avaria_<?php echo $item['id']; ?>">✖ Avaria</label>
 
-                <input type="radio" name="status_<?php echo $item['id']; ?>" id="na_<?php echo $item['id']; ?>" value="n/a"
-                  data-categoria="<?php echo $cat['id']; ?>">
-                <label for="na_<?php echo $item['id']; ?>">N/A</label>
+                    <input type="radio" name="status_<?php echo $item['id']; ?>" id="na_<?php echo $item['id']; ?>"
+                      value="n/a" data-categoria="<?php echo $cat['id']; ?>">
+                    <label for="na_<?php echo $item['id']; ?>">N/A</label>
+                  </div>
+
+                  <!-- Botão de Foto na mesma linha -->
+                  <div>
+                    <input type="file" id="foto_<?php echo $item['id']; ?>" accept="image/*" capture="environment"
+                      style="display:none;" onchange="enviarFoto(<?php echo $item['id']; ?>)">
+
+                    <button type="button" class="btn-foto opcoes-status"
+                      onclick="document.getElementById('foto_<?php echo $item['id']; ?>').click()"
+                      style="padding: 15px 5px; background: #FAFAFA; border: 2px solid var(--border-color); border-radius: var(--radius); cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; min-width: 120px;">
+                      📷 Foto
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <input type="text" class="obs-input" id="obs_<?php echo $item['id']; ?>"
                 placeholder="Observações (Opcional)...">
 
-              <!-- Bloco de Foto (Invisível o input real, usamos um botão bonitinho para clicar nele) -->
-              <div style="margin-top: 10px;">
-                <!-- O atributo capture="environment" força o Android/iOS a abrir a câmera traseira em vez dos arquivos -->
-                <input type="file" id="foto_<?php echo $item['id']; ?>" accept="image/*" capture="environment"
-                  style="display:none;" onchange="enviarFoto(<?php echo $item['id']; ?>)">
-
-                <button type="button" class="btn-foto"
-                  onclick="document.getElementById('foto_<?php echo $item['id']; ?>').click()"
-                  style="padding: 8px 15px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                  📷 Tirar Foto
-                </button>
-
-                <!-- Local onde a miniatura da foto vai aparecer após o upload -->
-                <div id="galeria_<?php echo $item['id']; ?>"
-                  style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;"></div>
-              </div>
+              <!-- Local onde a miniatura da foto vai aparecer após o upload -->
+              <div id="galeria_<?php echo $item['id']; ?>"
+                style="display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap;"></div>
             </div>
           <?php endif; ?>
         <?php endforeach; ?>

@@ -6,84 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Veículos - Vistoria Veicular</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .voltar {
-      display: inline-block;
-      margin-bottom: 20px;
-      background: #6c757d;
-      color: white;
-      padding: 10px 15px;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-
-    .form-cadastro {
-      background: #e9ecef;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    input,
-    select {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      flex: 1;
-      min-width: 150px;
-    }
-
-    button {
-      padding: 10px 20px;
-      background: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    th,
-    td {
-      padding: 12px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-
-    th {
-      background-color: #0056b3;
-      color: white;
-    }
-  </style>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
@@ -111,7 +34,7 @@
           <datalist id="listaModelos">
             <!-- As options serão carregadas via JavaScript -->
           </datalist>
-          <input type="number" name="ano" placeholder="Ano (Ex: 2024)" required min="1900" max="2100">
+          <input type="text" name="ano" placeholder="Ano (Ex: 2024)" required min="1900" max="2100" style="max-width: 100px;">
           <select name="tipo" required>
             <option value="">Selecione o Tipo...</option>
             <option value="Carro">Carro</option>
@@ -121,51 +44,72 @@
             <option value="Outros">Outros</option>
           </select>
         </div>
+        <div class="form-row">
+          <input type="text" name="nome_cliente" placeholder="Nome do Cliente" maxlength="100" required>
+          <input type="text" name="telefone" placeholder="Telefone (Ex: (11) 99999-9999)" maxlength="15" required style="max-width: 250px;" oninput="mascaraTelefone(this)">
+        </div>
         <button type="submit">💾 Salvar Veículo</button>
       </form>
     </div>
 
     <!-- Tabela de Listagem -->
     <h3>Veículos Cadastrados</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Placa</th>
-          <th>Marca / Modelo</th>
-          <th>Ano</th>
-          <th>Tipo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- O PHP interage com o HTML para gerar as linhas da tabela dinamicamente -->
-        <?php if (!empty($veiculos)): ?>
-          <?php foreach ($veiculos as $v): ?>
-            <tr>
-              <td>
-                <?php echo $v['id']; ?>
-              </td>
-              <td>
-                <?php echo htmlspecialchars($v['placa']); ?>
-              </td>
-              <td>
-                <?php echo htmlspecialchars($v['marca']) . ' ' . htmlspecialchars($v['modelo']); ?>
-              </td>
-              <td>
-                <?php echo htmlspecialchars($v['ano']); ?>
-              </td>
-              <td>
-                <?php echo htmlspecialchars($v['tipo']); ?>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-        <?php else: ?>
+    <div class="table-responsive">
+      <table>
+        <thead>
           <tr>
-            <td colspan="5" style="text-align: center;">Nenhum veículo cadastrado ainda.</td>
+            <th>ID</th>
+            <th>Placa</th>
+            <th>Marca / Modelo</th>
+            <th>Ano</th>
+            <th>Tipo</th>
+            <th>Cliente</th>
+            <th>Telefone</th>
+            <th>Ações</th>
           </tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <!-- O PHP interage com o HTML para gerar as linhas da tabela dinamicamente -->
+          <?php if (!empty($veiculos)): ?>
+            <?php foreach ($veiculos as $v): ?>
+              <tr>
+                <td>
+                  <?php echo $v['id']; ?>
+                </td>
+                <td>
+                  <?php echo htmlspecialchars($v['placa']); ?>
+                </td>
+                <td>
+                  <?php echo htmlspecialchars($v['marca']) . ' ' . htmlspecialchars($v['modelo']); ?>
+                </td>
+                <td>
+                  <?php echo htmlspecialchars($v['ano']); ?>
+                </td>
+                <td>
+                  <?php echo htmlspecialchars($v['tipo']); ?>
+                </td>
+                <td>
+                  <?php echo !empty($v['nome_cliente']) ? htmlspecialchars($v['nome_cliente']) : '-'; ?>
+                </td>
+                <td>
+                  <?php echo !empty($v['telefone']) ? htmlspecialchars($v['telefone']) : '-'; ?>
+                </td>
+                <td>
+                  <a href="editar_veiculo.php?id=<?php echo $v['id']; ?>" style="color: #0056b3; text-decoration: none; margin-right: 10px;">✏️ Editar</a>
+                  <?php if (isset($_SESSION['usuario_perfil']) && in_array($_SESSION['usuario_perfil'], ['admin', 'supervisor'])): ?>
+                  <a href="excluir_veiculo.php?id=<?php echo $v['id']; ?>" style="color: #dc3545; text-decoration: none;" onclick="return confirm('Tem certeza que deseja excluir?');">🗑️ Excluir</a>
+                  <?php endif; ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr>
+              <td colspan="8" style="text-align: center;">Nenhum veículo cadastrado ainda.</td>
+            </tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
   </div>
   <script>
     document.getElementById('inputMarca').addEventListener('input', function() {
@@ -190,6 +134,24 @@
           .catch(error => console.error('Erro ao buscar modelos:', error));
       }
     });
+
+    function mascaraTelefone(input) {
+      let v = input.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.substring(0, 11);
+      
+      if (v.length > 2) {
+        v = v.replace(/^(\d{2})(\d)/g, '($1) $2');
+      }
+      if (v.length > 13) {
+        v = v.replace(/(\d{5})(\d)/, '$1-$2'); // (99) 99999-9999
+      } else if (v.length > 9) {
+        v = v.replace(/(\d{4})(\d)/, '$1-$2'); // (99) 9999-9999
+      } else if (v.length > 8) {
+        // Formata na digitação a partir de certa quantidade de digitos
+        v = v.replace(/(\d{4,5})(\d)/, '$1-$2');
+      }
+      input.value = v;
+    }
   </script>
 </body>
 

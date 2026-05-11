@@ -4,14 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Editar Item - Vistoria Veicular</title>
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
-    .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .voltar { display: inline-block; margin-bottom: 20px; background: #6c757d; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; }
-    .form-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-    input, select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 150px; }
-    button { padding: 10px 20px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-  </style>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
   <div class="container">

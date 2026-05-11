@@ -15,77 +15,7 @@ if (!isset($itens)) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Itens de Checklist - Vistoria Veicular</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .voltar {
-      display: inline-block;
-      margin-bottom: 20px;
-      background: #6c757d;
-      color: white;
-      padding: 10px 15px;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    input,
-    select {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      flex: 1;
-      min-width: 150px;
-    }
-
-    button {
-      padding: 10px 20px;
-      background: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    th,
-    td {
-      padding: 12px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-
-    th {
-      background-color: #0056b3;
-      color: white;
-    }
-  </style>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
@@ -109,45 +39,47 @@ if (!isset($itens)) {
       <button type="submit">➕ Adicionar Item</button>
     </form>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Grupo (Categoria)</th>
-          <th>Ordem</th>
-          <th>Nome do Item</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if (!empty($itens)): ?>
-          <?php foreach ($itens as $item): ?>
-            <tr>
-              <td><strong>
-                  <?php echo htmlspecialchars($item['categoria_nome']); ?>
-                </strong></td>
-              <td>
-                <?php echo htmlspecialchars($item['ordem']); ?>
-              </td>
-              <td>
-                <?php echo htmlspecialchars($item['nome']); ?>
-              </td>
-              <td>
-                <?php echo $item['ativo'] ? 'Ativo' : 'Inativo'; ?>
-              </td>
-              <td>
-                <a href="editar_item.php?id=<?php echo $item['id']; ?>" style="color: #0056b3; text-decoration: none; margin-right: 10px;">✏️ Editar</a>
-                <a href="excluir_item.php?id=<?php echo $item['id']; ?>" style="color: #dc3545; text-decoration: none;" onclick="return confirm('Tem certeza que deseja excluir este item?');">🗑️ Excluir</a>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-        <?php else: ?>
+    <div class="table-responsive">
+      <table>
+        <thead>
           <tr>
-            <td colspan="4" style="text-align: center;">Nenhum item cadastrado.</td>
+            <th>Grupo (Categoria)</th>
+            <th>Ordem</th>
+            <th>Nome do Item</th>
+            <th>Status</th>
+            <th>Ações</th>
           </tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <?php if (!empty($itens)): ?>
+            <?php foreach ($itens as $item): ?>
+              <tr>
+                <td><strong>
+                    <?php echo htmlspecialchars($item['categoria_nome']); ?>
+                  </strong></td>
+                <td>
+                  <?php echo htmlspecialchars($item['ordem']); ?>
+                </td>
+                <td>
+                  <?php echo htmlspecialchars($item['nome']); ?>
+                </td>
+                <td>
+                  <?php echo $item['ativo'] ? 'Ativo' : 'Inativo'; ?>
+                </td>
+                <td>
+                  <a href="editar_item.php?id=<?php echo $item['id']; ?>" style="color: #0056b3; text-decoration: none; margin-right: 10px;">✏️ Editar</a>
+                  <a href="excluir_item.php?id=<?php echo $item['id']; ?>" style="color: #dc3545; text-decoration: none;" onclick="return confirm('Tem certeza que deseja excluir este item?');">🗑️ Excluir</a>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr>
+              <td colspan="4" style="text-align: center;">Nenhum item cadastrado.</td>
+            </tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
   </div>
 </body>
 
